@@ -20,7 +20,7 @@ UnitTests::~UnitTests() {
 
 void UnitTests::testLoad() {
 	BBPlugin bbp;
-	bbp.test_setPath(std::string("c:\\Tobbe\\DevProjects\\C++\\bbPlugin\\Debug\\bbPlugin.dll"));
+	bbp.test_setPath(projectPath + "Debug\\bbPlugin.dll");
 	bbp.test_setIsUsingSlit(false);
 	if (bbp.test_load() < 0) {
 		MessageBox(NULL, bbp.getError().c_str(), TEXT("Error in testLoad"), MB_OK);
@@ -29,7 +29,7 @@ void UnitTests::testLoad() {
 
 void UnitTests::testBeginEnd() {
 	BBPlugin bbp;
-	bbp.test_setPath(std::string("c:\\Tobbe\\DevProjects\\C++\\bbPlugin\\Debug\\bbPlugin.dll"));
+	bbp.test_setPath(projectPath + "Debug\\bbPlugin.dll");
 	bbp.test_setIsUsingSlit(false);
 
 	if (bbp.test_load() < 0) {
@@ -67,8 +67,8 @@ void UnitTests::testSecondConstructor() {
 }
 
 void UnitTests::testMultiplePlugins() {
-	BBPlugin bbp1(std::string("c:\\Tobbe\\DevProjects\\C++\\bbSimple\\Debug\\bbSimple.dll"), NULL);
-	BBPlugin bbp2(std::string("c:\\Tobbe\\DevProjects\\C++\\bbPlugin\\Debug\\bbPlugin.dll"), NULL);
+	BBPlugin bbp1(projectPath + "Debug\\bbSimple.dll", NULL);
+	BBPlugin bbp2(projectPath + "Debug\\bbPlugin.dll", NULL);
 	if (bbp1.runBegin() < 0) {
 		MessageBox(NULL, bbp1.getError().c_str(), TEXT("Error in testMultiplePlugins"), MB_OK);
 		return;
@@ -92,8 +92,8 @@ void UnitTests::testMultiplePlugins() {
 
 void UnitTests::testPluginVector() {
 	std::vector<BBPlugin*> plugs;
-	plugs.push_back(new BBPlugin(std::string("c:\\Tobbe\\DevProjects\\C++\\bbSimple\\Debug\\bbSimple.dll"), NULL));
-	plugs.push_back(new BBPlugin(std::string("c:\\Tobbe\\DevProjects\\C++\\bbPlugin\\Debug\\bbPlugin.dll"), NULL));
+	plugs.push_back(new BBPlugin(projectPath + "Debug\\bbSimple.dll", NULL));
+	plugs.push_back(new BBPlugin(projectPath + "Debug\\bbPlugin.dll", NULL));
 
 	for (unsigned int i = 0; i < plugs.size(); i++) {
 		//Check for errors generated when constructing the object

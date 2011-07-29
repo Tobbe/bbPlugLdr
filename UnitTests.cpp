@@ -146,7 +146,7 @@ void UnitTests::testExportedFunctions() {
 }
 
 void UnitTests::testLoadRealPlugin() {
-	BBPlugin bbp(std::string("c:\\bbClean\\plugins\\bbAnalog\\src\\Debug\\bbAnalog.dll"), NULL);
+	BBPlugin bbp(projectPath + "Debug\\bbAnalog.dll", NULL);
 	if (bbp.runBegin() < 0) {
 		MessageBox(NULL, bbp.getError().c_str(), TEXT("Error in testLoadRealPlugin"), MB_OK);
 		return;

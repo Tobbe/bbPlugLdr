@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bbPlugin", "bbPlugin\bbPlug
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bbPluginSettings", "bbPluginSettings\bbPluginSettings.vcproj", "{6E76BD78-8F12-44E8-90D6-0657F70976FA}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bbanalog", "bbAnalog\bbanalog.vcproj", "{2D01F278-4219-4029-8B66-8FF8344A8D37}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -31,6 +33,10 @@ Global
 		{6E76BD78-8F12-44E8-90D6-0657F70976FA}.Debug|Win32.Build.0 = Debug|Win32
 		{6E76BD78-8F12-44E8-90D6-0657F70976FA}.Release|Win32.ActiveCfg = Release|Win32
 		{6E76BD78-8F12-44E8-90D6-0657F70976FA}.Release|Win32.Build.0 = Release|Win32
+		{2D01F278-4219-4029-8B66-8FF8344A8D37}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2D01F278-4219-4029-8B66-8FF8344A8D37}.Debug|Win32.Build.0 = Debug|Win32
+		{2D01F278-4219-4029-8B66-8FF8344A8D37}.Release|Win32.ActiveCfg = Release|Win32
+		{2D01F278-4219-4029-8B66-8FF8344A8D37}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

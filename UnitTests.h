@@ -2,6 +2,7 @@
 #define _UNITTESTS_H_
 
 #include <windows.h>
+#include <string>
 
 class UnitTests {
 public:
@@ -11,6 +12,7 @@ public:
 protected:
 	
 private:
+	std::string projectPath;
 	void testLoad();
 	void testBeginEnd();
 	void testSecondConstructor();

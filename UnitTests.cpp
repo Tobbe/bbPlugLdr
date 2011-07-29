@@ -11,6 +11,8 @@
 #include <fstream>
 
 UnitTests::UnitTests() {
+	projectPath = std::string(__FILE__);
+	projectPath = projectPath.substr(0, projectPath.find_last_of("\\/") + 1);
 }
 
 UnitTests::~UnitTests() {
@@ -52,7 +54,7 @@ void UnitTests::testBeginEnd() {
 }
 
 void UnitTests::testSecondConstructor() {
-	BBPlugin bbp(std::string("c:\\Tobbe\\DevProjects\\C++\\bbSimple\\Debug\\bbSimple.dll"), NULL);
+	BBPlugin bbp(projectPath + "Debug\\bbSimple.dll", NULL);
 	if (bbp.runBegin() < 0) {
 		MessageBox(NULL, bbp.getError().c_str(), TEXT("Error in testSecondConstructor"), MB_OK);
 		return;
@@ -341,8 +343,8 @@ void UnitTests::testOtherGradients(HWND hWnd) {
 		MessageBox(NULL, TEXT("Starting color of diagonal gradient is wrong"), TEXT("Error in testOtherGradients"), MB_OK);
 	}
 
-	//if (GetPixel(hDC, 94, 5) != RGB(0, 0, 255)) {
-	if (GetPixel(hDC, 94, 5) != RGB(2, 2, 252)) { // Dunno why it doesn't end in 0, 0, 255...
+	if (GetPixel(hDC, 94, 5) != RGB(0, 0, 255)) {
+	//if (GetPixel(hDC, 94, 5) != RGB(2, 2, 252)) { // Dunno why it doesn't end in 0, 0, 255...
 		MessageBox(NULL, "Ending color of diagonal gradient is wrong", "Error in testOtherGradients", MB_OK);
 	}
 

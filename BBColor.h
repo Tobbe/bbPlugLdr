@@ -6,17 +6,17 @@
 
 class BBColor {
 public:
-	COLORREF readColorFromString(const char *colorstring);
-	std::string colorRefToString(COLORREF c);
+	COLORREF readColorFromString(const std::string &colorstring);
+	std::string colorrefToString(COLORREF c);
 
 #ifdef _DEBUG
 	friend class UnitTests;
 #endif // _DEBUG
 private:
-	COLORREF parseLiteralColor(const char *color);
-	char *rgbToHexstring(char *source);
+	COLORREF parseLiteralColor(const std::string &color);
+	std::string &rgbToHexstring(std::string &source);
 	COLORREF switchRgb(COLORREF c);
-	char *unquote(const char *source, char *dest);
+	std::string unquote(const std::string &source);
 };
 
 #endif

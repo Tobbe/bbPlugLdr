@@ -1,19 +1,28 @@
-#include "bbRnr.h"
+#include "../LitestepHEAD/lsapi/lsapi.h"
+#include "bbPlugLdr.h"
 #include "MessageMap.h"
 #include "UnitTests.h"
 #include "BBColor.h"
-#include "Utils.h"
+#include "Files.h"
+#include "Settings.h"
+#include "../xSDK/xExports.h"
+#include "debug.hpp"
+#include <cctype>
+#include <algorithm>
 
 HWND hwnd;
-const char className[] = "bbRnr";
+const char className[] = "bbPlugLdr";
+const char version[] = "0.1";
 const char bbVersion[] = "bbLean 1.16 impersonator";
 MessageMap msgMap;
 BBColor bbc;
-Utils utils;
+Files files;
+Settings settings;
 
 void execCommand(const char *cmd);
 
 #ifdef _DEBUG
+bool firstShow = true;
 UnitTests tests;
 #endif // _DEBUG
 
@@ -30,17 +39,25 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				execCommand(reinterpret_cast<const char*>(lParam));
 			}
 			break;
-		case WM_CREATE:
+		case WM_PAINT: {
+			BITMAP bm;
+			PAINTSTRUCT ps;
+			HDC hdc = BeginPaint(hwnd, &ps);
 			#ifdef _DEBUG
-				tests.runTests();
+				if (firstShow) {
+					firstShow = false;
+					tests.runTests(hwnd);
+				}
 			#endif // _DEBUG
+			EndPaint(hwnd, &ps);
 	
 			break;
+		}
 		case WM_CLOSE:
-			DestroyWindow(hwnd);
+			//DestroyWindow(hwnd);
 			break;
 		case WM_DESTROY:
-			PostQuitMessage(0);
+			//PostQuitMessage(0);
 			break;
 		default:
 			return DefWindowProc(hwnd, msg, wParam, lParam);
@@ -48,9 +65,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	return 0;
 }
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+//int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+extern "C" int initModuleEx(HWND hwndParent, HINSTANCE hInstance, const char *path) {
 	WNDCLASSEX wc;
-	MSG msg;
+	//MSG msg;
 
 	wc.cbSize        = sizeof(WNDCLASSEX);
 	wc.style         = 0;
@@ -73,25 +91,31 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	hwnd = CreateWindowEx(
 		WS_EX_CLIENTEDGE,
 		className,
-		"bbRnr", //Window title
-		WS_OVERLAPPEDWINDOW,
+		"bbPlugLdr", //Window title
+		WS_OVERLAPPEDWINDOW | WS_VISIBLE,
 		CW_USEDEFAULT, CW_USEDEFAULT, 240, 120,
 		NULL, NULL, hInstance, NULL);
 
 	if(hwnd == NULL) {
+		UnregisterClass(className, hInstance);
 		MessageBox(NULL, "Window Creation Failed!", "Error!", MB_ICONEXCLAMATION | MB_OK);
 		return 0;
 	}
 
-	ShowWindow(hwnd, nCmdShow);
-	UpdateWindow(hwnd);
+	//ShowWindow(hwnd, true);
+	//UpdateWindow(hwnd);
 
-	while(GetMessage(&msg, NULL, 0, 0) > 0) {
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
-	}
+	SendMessage(GetLitestepWnd(), LM_REGISTERMESSAGE, reinterpret_cast<WPARAM>(hwnd), reinterpret_cast<LPARAM>(lsMessages));
 
-	return msg.wParam;
+	//Only needed for "stickyness"
+	//SetWindowLongPtr(hwnd, GWLP_USERDATA, magicDWord);
+
+	return 0;
+}
+
+extern "C" void quitModule(HINSTANCE hInstance) {
+	DestroyWindow(hwnd);
+	UnregisterClass(className, hInstance);
 }
 
 HWND GetBBWnd() {
@@ -182,7 +206,7 @@ void WriteColor(const char filePath[], const char key[], COLORREF value) {
 }
 
 bool FileExists(const char filePath[]) {
-	return utils.fileExists(filePath);
+	return files.fileExists(filePath);
 }
 
 void SnapWindowToEdge(WINDOWPOS* windowPosition, LPARAM nDist_or_pContent, unsigned int flags) {
@@ -252,7 +276,7 @@ void MakeStyleGradient(HDC hDC, RECT *rect, StyleItem *si, bool withBorder) {
 	DeleteObject(hBrush);
 }
 
-void MakeGradient(HDC hDC, RECT rect, int gradientType, COLORREF colourFrom, COLORREF colourTo, bool interlaced, int bevelStyle, int bevelPosition, int bevelWidth, COLORREF borderColour, int borderWidth) {
+void MakeGradient(HDC hDC, RECT rect, int gradientType, COLORREF colorFrom, COLORREF colorTo, bool interlaced, int bevelStyle, int bevelPosition, int bevelWidth, COLORREF borderColour, int borderWidth) {
 	HBRUSH hBrush = CreateSolidBrush(RGB(0, 255, 0));
 
 	SelectObject(hDC, hBrush);
@@ -263,6 +287,7 @@ void MakeGradient(HDC hDC, RECT rect, int gradientType, COLORREF colourFrom, COL
 bool IsInString(const char inputString[], const char searchString[]) {
 	return false;
 }
+
 int GetTraySize(void) {
 	return 0;
 }

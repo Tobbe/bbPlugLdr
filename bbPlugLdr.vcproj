@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="bbRnr"
-	ProjectGUID="{DAD69BB7-FCBA-4603-9AAE-0BB4F00230A8}"
-	RootNamespace="bbRnr"
+	Name="bbPlugLdr"
+	ProjectGUID="{BAA00719-164C-4696-81B5-60887BFBA3D0}"
+	RootNamespace="bbPlugLdr"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
 	>
@@ -20,7 +20,7 @@
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="1"
+			ConfigurationType="2"
 			CharacterSet="1"
 			>
 			<Tool
@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;BBPLUGLDR_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -61,6 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="..\LitestepHEAD\Debug_VC8\lsapi.lib ..\xSDK\xPaintClass-1.0.lib"
 				OutputFile="$(OutDir)\blackbox.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
@@ -93,7 +94,7 @@
 			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="1"
+			ConfigurationType="2"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -116,7 +117,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;BBPLUGLDR_EXPORTS"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
@@ -182,7 +183,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\bbRnr.cpp"
+				RelativePath=".\bbPlugLdr.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Files.cpp"
 				>
 			</File>
 			<File
@@ -190,11 +195,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\UnitTests.cpp"
+				RelativePath=".\Settings.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Utils.cpp"
+				RelativePath=".\UnitTests.cpp"
 				>
 			</File>
 		</Filter>
@@ -212,7 +217,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\bbRnr.h"
+				RelativePath=".\bbPlugLdr.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Files.h"
 				>
 			</File>
 			<File
@@ -220,11 +229,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\UnitTests.h"
+				RelativePath=".\Settings.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Utils.h"
+				RelativePath=".\UnitTests.h"
 				>
 			</File>
 		</Filter>

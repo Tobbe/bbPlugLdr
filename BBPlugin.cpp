@@ -1,5 +1,5 @@
 #include "bbPlugin.h"
-#include "Utils.h"
+#include "Files.h"
 #include <windows.h>
 
 BBPlugin::BBPlugin() : hPlugin(NULL), beginPlugin(NULL), endPlugin(NULL), beginSlitPlugin(NULL), beginPluginEx(NULL) {
@@ -17,6 +17,12 @@ BBPlugin::BBPlugin(const std::string &path, HWND hSlit) : hPlugin(NULL) {
 	setIsUsingSlit(hSlit != NULL);
 	if (load() == 0) {
 		getExportedFunctions();
+	}
+}
+
+BBPlugin::~BBPlugin() {
+	if (hPlugin != NULL) {
+		FreeLibrary(hPlugin);
 	}
 }
 
@@ -43,10 +49,10 @@ int BBPlugin::load() {
 		int err = GetLastError();
 		//dbg_printf("error %d", GetLastError());
 		if (err == ERROR_DLL_NOT_FOUND || err == ERROR_MOD_NOT_FOUND) {
-			Utils u;
+			Files f;
 			//char buffer[MAX_PATH];
 			//string path = make_bb_path(buffer, q->fullpath);
-			if (u.fileExists(path)) {
+			if (f.fileExists(path)) {
 				//error = error_dll_needs_module;
 				error = path + " is not a valid module";
 			} else {
@@ -224,12 +230,6 @@ int BBPlugin::runEnd() {
 
 std::string BBPlugin::getError() {
 	return error;
-}
-
-BBPlugin::~BBPlugin() {
-	if (hPlugin != NULL) {
-		FreeLibrary(hPlugin);
-	}
 }
 
 #ifdef _DEBUG

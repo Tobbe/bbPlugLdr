@@ -6,6 +6,20 @@
 #define BB_EXECUTE              10202 /* Send a command or bro@m for execution (in lParam) */
 #define BB_BROADCAST            10901 /* lParam: command string */
 
+// Gradient types + solid
+#define B_HORIZONTAL        0
+#define B_VERTICAL          1
+#define B_DIAGONAL          2
+#define B_CROSSDIAGONAL     3
+#define B_PIPECROSS         4
+#define B_ELLIPTIC          5
+#define B_RECTANGLE         6
+#define B_PYRAMID           7
+#define B_SOLID             8
+#define B_SPLITVERTICAL     9
+#define B_MIRRORHORIZONTAL  10
+#define B_MIRRORVERTICAL    11
+
 #define WIN32_LEAN_AND_MEAN
 
 #include <windows.h>
@@ -15,11 +29,14 @@ class MenuItem;
 class StyleItem;
 class SystemTray;
 
-extern "C" {
-	__declspec(dllexport) HWND GetBBWnd();
-/*	__declspec(dllexport) const char* const GetBBVersion();
+extern "C" {	
+	__declspec(dllexport) int initModuleEx(HWND hwndParent, HINSTANCE hInstance, LPCSTR szPath);
+	__declspec(dllexport) void quitModule(HINSTANCE hInstance);
 
-	__declspec(dllexport) void GetBlackboxEditor(char *editor);*/
+	__declspec(dllexport) HWND GetBBWnd();
+	__declspec(dllexport) const char* const GetBBVersion();
+
+	__declspec(dllexport) void GetBlackboxEditor(char *editor);
 	__declspec(dllexport) char * WINAPI GetBlackboxPath(char *path, int maxLength);
 	__declspec(dllexport) const char *stylePath(const char styleFileName[] = NULL);
 
@@ -56,8 +73,8 @@ extern "C" {
 
 /*	__declspec(dllexport) HFONT CreateStyleFont(StyleItem * si);
 	__declspec(dllexport) void CreateBorder(HDC hdc, RECT* p_rect, COLORREF borderColour, int borderWidth);
-	__declspec(dllexport) void MakeStyleGradient(HDC hDC, RECT *rect, StyleItem *si, bool withBorder);*/
-	__declspec(dllexport) void MakeGradient(HDC hDC, RECT rect, int gradientType, COLORREF colourFrom, COLORREF colourTo, bool interlaced, int bevelStyle, int bevelPosition, int bevelWidth, COLORREF borderColour, int borderWidth);
+	__declspec(dllexport) void MakeStyleGradient(hDC hDC, RECT *rect, StyleItem *si, bool withBorder);*/
+	__declspec(dllexport) void MakeGradient(HDC hDC, RECT rect, int gradientType, COLORREF colorFrom, COLORREF colorTo, bool interlaced, int bevelStyle, int bevelPosition, int bevelWidth, COLORREF borderColour, int borderWidth);
 /*
 	__declspec(dllexport) int GetTraySize(void);
 	__declspec(dllexport) SystemTray* GetTrayIcon(int pointer);

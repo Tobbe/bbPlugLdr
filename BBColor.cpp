@@ -1,5 +1,7 @@
 #include "BBColor.h"
 #include <sstream>
+#include <cctype>
+#include <algorithm>
 
 //===========================================================================
 // Function: ParseLiteralColor
@@ -233,12 +235,12 @@ static struct litcolor4 {
 	{"thistle", {RGB(255,225,255), RGB(238,210,238), RGB(205,181,205), RGB(139,123,139)}}
 };
 
-COLORREF BBColor::parseLiteralColor(const char *color) {
-	unsigned l = strlen(color) + 1;
+COLORREF BBColor::parseLiteralColor(const std::string &color) {
+	unsigned l = color.length() + 1;
 	if (l > 2 && l < 32)
 	{
 		char buf[32];
-		memcpy(buf, color, l);
+		memcpy(buf, color.c_str(), l);
 		char *p;
 		while ((p = strchr(buf, ' ')) != NULL) {
 			strcpy_s(p, 32 - (p - buf), p + 1);
@@ -291,22 +293,24 @@ COLORREF BBColor::parseLiteralColor(const char *color) {
 // Function: ReadColorFromString
 // Purpose: parse a literal or hexadecimal color string
 
-COLORREF BBColor::readColorFromString(const char *colorstring) {
-	if (colorstring == NULL) {
+COLORREF BBColor::readColorFromString(const std::string &colorstring) {
+	if (colorstring == "") {
 		return (COLORREF)-1;
 	}
 
-	char stub[256];
-	char *s;
-	_strlwr_s(unquote(colorstring, stub), 256);
-	s = rgbToHexstring(stub);
+	const char *s;
+	std::string stub = unquote(colorstring);
+	std::transform(stub.begin(), stub.end(), stub.begin(), (int(*)(int))std::tolower);
+	
+	s = rgbToHexstring(stub).c_str();
 
 	if (*s == '#') {
 		s++;
 	}
 
 	COLORREF cr = 0;
-	char *d, c;
+	const char *d; 
+	char c;
 	// check if it's a valid hex number
 	bool invalid = false;
 	d = s;
@@ -341,23 +345,20 @@ COLORREF BBColor::switchRgb(COLORREF c) {
 	return (c&0x0000ff)<<16 | (c&0x00ff00) | (c&0xff0000)>>16;
 }
 
-char *BBColor::unquote(const char *source, char *dest) {
-	int len = strlen(source);
+std::string BBColor::unquote(const std::string &source) {
+	std::string dest = source;
+	int len = source.length();
 	if (len >= 2 && (source[0] == '\"' || source[0] == '\'') && source[0] == source[len - 1]) {
-		memcpy(dest, source + 1, len - 2);
-		dest[len - 2] = '\0';
-	} else {
-		memcpy(dest, source, len);
-		dest[len] = '\0';
+		dest = source.substr(1, len - 2);
 	}
 
 	return dest;
 }
 
 // Convert an "rgb:12/e/c" type string to a 12eecc type string
-char *BBColor::rgbToHexstring(char *source) {
-	const char *s = source;
-	if (memcmp(s, "rgb:", 4) == 0) {
+std::string &BBColor::rgbToHexstring(std::string &source) {
+	const char *s = source.c_str();
+	if (source.substr(0, 4) == "rgb:") {
 		char rgbstr[7];
 		char *d;
 		int j = 3;
@@ -371,14 +372,14 @@ char *BBColor::rgbToHexstring(char *source) {
 				++s;
 			}
 		} while (--j);
-		*d = 0;
-		strncpy_s(source, 7, rgbstr, 7);
+		*d = '\0';
+		source = rgbstr;
 	} 
 
 	return source;
 }
 
-std::string BBColor::colorRefToString(COLORREF c) {
+std::string BBColor::colorrefToString(COLORREF c) {
 	std::ostringstream oss;
 
 	DWORD r = GetRValue(c);

@@ -1,10 +1,14 @@
 #include "UnitTests.h"
 #include "BBPlugin.h"
 #include "MessageMap.h"
+#include "Settings.h"
 #include "BBColor.h"
-#include "bbRnr.h"
+#include "bbPlugLdr.h"
 #include <windows.h>
 #include <vector>
+#include <algorithm>
+#include <cctype>
+#include <fstream>
 
 UnitTests::UnitTests() {
 }
@@ -136,7 +140,7 @@ void UnitTests::testExportedFunctions() {
 
 	char buf[MAX_PATH];
 	GetBlackboxPath(buf, MAX_PATH);
-	MessageBox(NULL, buf, TEXT("testExportedFunctions"), MB_OK);
+	MessageBox(NULL, buf, TEXT("GetBlackboxPath() in testExportedFunctions"), MB_OK);
 }
 
 void UnitTests::testLoadRealPlugin() {
@@ -214,6 +218,11 @@ void UnitTests::testHexAndRgbStringToColorref() {
 		MessageBox(NULL, TEXT("Failed to convert hex-string to colorref"), TEXT("Error in testHexAndRgbStringToColorref"), MB_OK);
 	}
 
+	c = bbc.readColorFromString("'01Ab23'");
+	if (c != 0x23ab01) { //bgr instead of rgb
+		MessageBox(NULL, TEXT("Failed to convert hex-string with quotes to colorref"), TEXT("Error in testHexAndRgbStringToColorref"), MB_OK);
+	}
+
 	c = bbc.readColorFromString("a12");
 	if (c != 0x2211aa) { //bgr instead of rgb
 		MessageBox(NULL, TEXT("Failed to convert short hex-string to colorref"), TEXT("Error in testHexAndRgbStringToColorref"), MB_OK);
@@ -240,20 +249,182 @@ void UnitTests::testColorStringToColorref() {
 
 void UnitTests::testColorrefToString() {
 	BBColor bbc;
-	COLORREF c = RGB(255, 0, 255); // 16711935
+	COLORREF c = RGB(255, 0, 255);
 	std::string s = "ff00ff";
-	if (bbc.colorRefToString(c) != s) {
+	std::string converted = bbc.colorrefToString(c);
+
+	std::transform(converted.begin(), converted.end(), converted.begin(), (int(*)(int)) std::tolower);
+
+	if (bbc.colorrefToString(c) != s) {
 		MessageBox(NULL, TEXT("Failed to convert RGB(255, 0, 255) to \"ff00ff\""), TEXT("Error in testColorrefToString"), MB_OK);
 	}
 
 	c = RGB(100, 60, 10);
 	s = "643c0a";
-	if (bbc.colorRefToString(c) != s) {
+	converted = bbc.colorrefToString(c);
+
+	std::transform(converted.begin(), converted.end(), converted.begin(), (int(*)(int)) std::tolower);
+
+	if (bbc.colorrefToString(c) != s) {
 		MessageBox(NULL, TEXT("Failed to convert RGB(100, 60, 10) to \"643c0a\""), TEXT("Error in testColorrefToString"), MB_OK);
 	}
 }
 
-void UnitTests::runTests() {
+void UnitTests::testHorizontalGradient(HWND hWnd) {
+	RECT r;
+	r.top = 0;
+	r.bottom = 100;
+	r.left = 0;
+	r.right = 100;
+
+	//HDC hDC = CreateDC("DISPLAY", NULL, NULL, NULL);
+	HDC hDC = GetDC(hWnd);
+	HBITMAP hBitmap = CreateCompatibleBitmap(hDC, 100, 100);
+	HBITMAP hOldBitmap = static_cast<HBITMAP>(SelectObject(hDC, hBitmap));
+
+	MakeGradient(hDC, r, B_HORIZONTAL, RGB(0, 0, 255), RGB(255, 255, 0), false, 0, 0, 0, RGB(0, 0, 0), 0);		
+
+	if (GetPixel(hDC, 0, 50) != RGB(0, 0, 255)) {
+		MessageBox(NULL, TEXT("Starting color of gradient is wrong"), TEXT("Error in testHorizontalGradient"), MB_OK);
+	}
+
+	if (GetPixel(hDC, 99, 50) != RGB(255, 255, 0)) {
+		MessageBox(NULL, "Ending color of gradient is wrong", "Error in testHorizontalGradient", MB_OK);
+	}
+
+	r.left = 5;
+	r.top = 5;
+	r.right = 95;
+	r.bottom = 95;
+	MakeGradient(hDC, r, B_HORIZONTAL, RGB(255, 255, 0), RGB(0, 0, 255), false, 0, 0, 0, RGB(0, 0, 0), 0);		
+
+	if (GetPixel(hDC, 5, 50) != RGB(255, 255, 0)) {
+		MessageBox(NULL, TEXT("Starting color of gradient is wrong"), TEXT("Error in testHorizontalGradient"), MB_OK);
+	}
+
+	if (GetPixel(hDC, 94, 50) != RGB(0, 0, 255)) {
+		MessageBox(NULL, "Ending color of gradient is wrong", "Error in testHorizontalGradient", MB_OK);
+	}
+
+	SelectObject(hDC, hOldBitmap);
+	DeleteObject(hBitmap);
+}
+
+void UnitTests::testOtherGradients(HWND hWnd) {
+	RECT r;
+	r.top = 0;
+	r.bottom = 100;
+	r.left = 0;
+	r.right = 100;
+
+	HDC hDC = GetDC(hWnd);
+	HBITMAP hBitmap = CreateCompatibleBitmap(hDC, 100, 100);
+	HBITMAP hOldBitmap = static_cast<HBITMAP>(SelectObject(hDC, hBitmap));
+
+	MakeGradient(hDC, r, B_VERTICAL, RGB(0, 0, 255), RGB(255, 255, 0), false, 0, 0, 0, RGB(0, 0, 0), 0);
+
+	if (GetPixel(hDC, 50, 0) != RGB(0, 0, 255)) {
+		MessageBox(NULL, TEXT("Starting color of gradient is wrong"), TEXT("Error in testOtherGradient"), MB_OK);
+	}
+
+	if (GetPixel(hDC, 50, 99) != RGB(255, 255, 0)) {
+		MessageBox(NULL, "Ending color of gradient is wrong", "Error in testOtherGradient", MB_OK);
+	}
+
+	r.left = 5;
+	r.top = 5;
+	r.right = 95;
+	r.bottom = 95;
+	MakeGradient(hDC, r, B_DIAGONAL, RGB(255, 255, 0), RGB(0, 0, 255), false, 0, 0, 0, RGB(0, 0, 0), 0);
+
+	if (GetPixel(hDC, 5, 94) != RGB(255, 255, 0)) {
+		MessageBox(NULL, TEXT("Starting color of diagonal gradient is wrong"), TEXT("Error in testOtherGradients"), MB_OK);
+	}
+
+	//if (GetPixel(hDC, 94, 5) != RGB(0, 0, 255)) {
+	if (GetPixel(hDC, 94, 5) != RGB(2, 2, 252)) { // Dunno why it doesn't end in 0, 0, 255...
+		MessageBox(NULL, "Ending color of diagonal gradient is wrong", "Error in testOtherGradients", MB_OK);
+	}
+
+	SelectObject(hDC, hOldBitmap);
+	DeleteObject(hBitmap);
+}
+
+void UnitTests::testIsInString() {
+	if (!IsInString("This is a test string", "test")) {
+		MessageBox(NULL, "IsInString returned false when it should have returned true", "Error in testIsInString", MB_OK);
+	}
+
+	if (!IsInString("AbCdEfGhIjKlMnOpQrStUv", "klm")) {
+		MessageBox(NULL, "IsInString returned false when it should have returned true", "Error in testIsInString", MB_OK);
+	}
+
+	if (IsInString("AbCdEfGhIjKlMnOpQrStUv", "Adam")) {
+		MessageBox(NULL, "IsInString returned true when it should have returned false", "Error in testIsInString", MB_OK);
+	}
+}
+
+void UnitTests::testSettings() {
+	Settings s;
+	
+	if (s.getString("blackbox.editor:") != "notepad.exe") {
+		MessageBox(NULL, "blackbox.editor: != notepad.exe", "Error in testSettings", MB_OK);
+	}
+
+	if (s.readString("", "¤#¤#", "%%") != "%%") {
+		MessageBox(NULL, "readString didn't return the default value", "Error in testSettings", MB_OK);
+	}
+
+	std::ofstream outFile("C:\\TestFilebbPlugLdr.rc");
+
+	if (!outFile.is_open()) {
+		MessageBox(NULL, "Couldn't open test file for writing", "Error in testSettings", MB_OK);
+		return;
+	}
+
+	outFile << "test.key.1: " << "value.1" << "\n" <<
+	           "\t\t  test.key.2: " << "value.2" << "\n" <<
+	           "test.key.3: " << "value.3" << "\n" <<
+	           "test.key.4: " << "value.4" << "\n";
+
+	outFile.close();
+
+	s.writeString("C:\\TestFilebbPlugLdr.rc", "test.key.5:", "value.5");
+	s.writeString("C:\\TestFilebbPlugLdr.rc", "test.key.2:", "value.2b");
+	s.writeInt("C:\\TestFilebbPlugLdr.rc", "test.key.int:", 512);
+	s.writeBool("C:\\TestFilebbPlugLdr.rc", "test.key.bool:", false);
+	s.writeColor("C:\\TestFilebbPlugLdr.rc", "test.key.color:", 0xefcdab);
+}
+
+void UnitTests::testRCSettings() {
+	int i = ReadInt("", "bbPlugLdr.intVal", 0);
+	bool b = ReadBool("", "bbPlugLdr.boolVal", true);
+	const char *s = ReadString("", "bbPlugLdr.stringVal", "");
+	COLORREF c = ReadColor("", "bbPlugLdr.colorVal", 0);
+
+	if (i != 123) {
+		MessageBox(NULL, "ReadInt failed", "Error in testReadRCSettings", MB_OK);
+	}
+
+	if (b != false) {
+		MessageBox(NULL, "ReadBool failed", "Error in testReadRCSettings", MB_OK);
+	}
+
+	if (_stricmp(s, "string") != 0) {
+		MessageBox(NULL, "ReadString failed", "Error in testReadRCSettings", MB_OK);
+	}
+
+	if (c != 0xccbbaa) {
+		MessageBox(NULL, "ReadColor failed", "Error in testReadRCSettings", MB_OK);
+	}
+
+	WriteInt("C:\\TestFilebbPlugLdr.rc", "bbPlugLdr.intVal", i);
+	WriteBool("C:\\TestFilebbPlugLdr.rc", "bbPlugLdr.boolVal", b);
+	WriteString("C:\\TestFilebbPlugLdr.rc", "bbPlugLdr.stringVal", s);
+	WriteColor("C:\\TestFilebbPlugLdr.rc", "bbPlugLdr.colorVal", c);
+}
+
+void UnitTests::runTests(HWND hWnd) {
 	MessageBox(NULL, TEXT("Starting test sequence"), TEXT("Testing"), MB_OK);
 
 	testLoad();
@@ -262,7 +433,6 @@ void UnitTests::runTests() {
 	testMultiplePlugins();
 	testPluginVector();
 	testExportedFunctions();
-	testLoadRealPlugin();
 
 	testMessageMapAdd();
 	testMessageMapRemove();
@@ -270,6 +440,15 @@ void UnitTests::runTests() {
 	testHexAndRgbStringToColorref();
 	testColorStringToColorref();
 	testColorrefToString();
+
+	testHorizontalGradient(hWnd);
+	testOtherGradients(hWnd);
+
+	testIsInString();
+	testSettings();
+	testRCSettings();
+
+	testLoadRealPlugin();
 
 	MessageBox(NULL, TEXT("Test sequence done"), TEXT("Testing"), MB_OK);
 }

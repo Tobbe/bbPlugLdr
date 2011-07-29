@@ -124,7 +124,7 @@ void UnitTests::testExportedFunctions() {
 	// the testing is done either by calling a plugin that uses
 	// the function, or by calling the function ourselves.
 
-	BBPlugin bbp(std::string("c:\\Tobbe\\DevProjects\\C++\\bbPluginSettings\\Debug\\bbPluginSettings.dll"), NULL);
+	BBPlugin bbp(projectPath + "Debug\\bbPluginSettings.dll", NULL);
 	if (bbp.runBegin() < 0) {
 		MessageBox(NULL, bbp.getError().c_str(), TEXT("Error in testExportedFunctions"), MB_OK);
 		return;

@@ -135,7 +135,7 @@ void UnitTests::testExportedFunctions() {
 		return;
 	}
 
-	if (!FileExists("c:\\autoexec.bat")) {
+	if (!FileExists(__FILE__)) {
 		MessageBox(NULL, TEXT("FileExists returns false when it should return true"), TEXT("Error in testExportedFunctions"), MB_OK);
 		return;
 	}

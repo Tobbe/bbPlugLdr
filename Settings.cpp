@@ -1,7 +1,7 @@
 #include "Settings.h"
 #include "Files.h"
 #include "BBColor.h"
-#include "../Litestep/lsapi/lsapi.h"
+#include "../Litestep24x/lsapi/lsapi.h"
 #include <sstream>
 #include <fstream>
 

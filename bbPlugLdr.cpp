@@ -1,4 +1,4 @@
-#include "../LitestepHEAD/lsapi/lsapi.h"
+#include "../Litestep24x/lsapi/lsapi.h"
 #include "bbPlugLdr.h"
 #include "MessageMap.h"
 #include "UnitTests.h"

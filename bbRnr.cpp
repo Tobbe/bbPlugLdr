@@ -18,7 +18,7 @@ UnitTests tests;
 #endif // _DEBUG
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-    switch(msg) {
+	switch(msg) {
 		case BB_REGISTERMESSAGE:
 			msgMap.addMessages(reinterpret_cast<unsigned int*>(lParam), reinterpret_cast<HWND>(wParam));
 			break;
@@ -36,16 +36,16 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			#endif // _DEBUG
 	
 			break;
-        case WM_CLOSE:
-            DestroyWindow(hwnd);
+		case WM_CLOSE:
+			DestroyWindow(hwnd);
 			break;
-        case WM_DESTROY:
-            PostQuitMessage(0);
+		case WM_DESTROY:
+			PostQuitMessage(0);
 			break;
-        default:
-            return DefWindowProc(hwnd, msg, wParam, lParam);
-    }
-    return 0;
+		default:
+			return DefWindowProc(hwnd, msg, wParam, lParam);
+	}
+	return 0;
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
@@ -86,12 +86,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	ShowWindow(hwnd, nCmdShow);
 	UpdateWindow(hwnd);
 
-    while(GetMessage(&msg, NULL, 0, 0) > 0) {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-    }
+	while(GetMessage(&msg, NULL, 0, 0) > 0) {
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
 
-    return msg.wParam;
+	return msg.wParam;
 }
 
 HWND GetBBWnd() {
@@ -247,17 +247,17 @@ void CreateBorder(HDC hdc, RECT* p_rect, COLORREF borderColour, int borderWidth)
 void MakeStyleGradient(HDC hDC, RECT *rect, StyleItem *si, bool withBorder) {
 	HBRUSH hBrush = CreateSolidBrush(RGB(0, 255, 0));
 
-    SelectObject(hDC, hBrush);
-    Rectangle(hDC, rect->left, rect->top, rect->right, rect->bottom);
-    DeleteObject(hBrush);
+	SelectObject(hDC, hBrush);
+	Rectangle(hDC, rect->left, rect->top, rect->right, rect->bottom);
+	DeleteObject(hBrush);
 }
 
 void MakeGradient(HDC hDC, RECT rect, int gradientType, COLORREF colourFrom, COLORREF colourTo, bool interlaced, int bevelStyle, int bevelPosition, int bevelWidth, COLORREF borderColour, int borderWidth) {
 	HBRUSH hBrush = CreateSolidBrush(RGB(0, 255, 0));
 
-    SelectObject(hDC, hBrush);
-    Rectangle(hDC, rect.left, rect.top, rect.right, rect.bottom);
-    DeleteObject(hBrush);
+	SelectObject(hDC, hBrush);
+	Rectangle(hDC, rect.left, rect.top, rect.right, rect.bottom);
+	DeleteObject(hBrush);
 }
 
 bool IsInString(const char inputString[], const char searchString[]) {

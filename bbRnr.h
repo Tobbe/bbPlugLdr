@@ -15,7 +15,7 @@ class MenuItem;
 class StyleItem;
 class SystemTray;
 
-extern "C" {	
+extern "C" {
 	__declspec(dllexport) HWND GetBBWnd();
 /*	__declspec(dllexport) const char* const GetBBVersion();
 

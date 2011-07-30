@@ -154,7 +154,17 @@ void UnitTests::testExportedFunctions() {
 
 	char buf[MAX_PATH];
 	GetBlackboxPath(buf, MAX_PATH);
-	MessageBox(NULL, buf, TEXT("GetBlackboxPath() in testExportedFunctions"), MB_OK);
+	// GetBlackboxPath should return the path to the folder of the currently 
+	// running LiteStep.exe. I couldn't figure out an easy enough way to test
+	// that, so I just check that the returned folder contains a litestep.exe
+	// file and a lsapi.dll file. It will have to do for now.
+	if (GetFileAttributes((std::string(buf) + "litestep.exe").c_str()) == 0xFFFFFFFF) {
+		MessageBox(NULL, TEXT("GetBlackboxPath returned a directory without any litestep.exe in it"), TEXT("Error in testExportedFunctions"), MB_OK);
+	}
+
+	if (GetFileAttributes((std::string(buf) + "lsapi.dll").c_str()) == 0xFFFFFFFF) {
+		MessageBox(NULL, TEXT("GetBlackboxPath returned a directory without any lsapi.dll in it"), TEXT("Error in testExportedFunctions"), MB_OK);
+	}
 }
 
 void UnitTests::testLoadRealPlugin() {

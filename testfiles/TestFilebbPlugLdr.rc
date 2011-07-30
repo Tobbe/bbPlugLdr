@@ -1,0 +1,12 @@
+test.key.1: value.1
+test.key.3: value.3
+test.key.4: value.4
+test.key.5: value.5
+test.key.2: value.2b
+test.key.int: 512
+test.key.bool: false
+test.key.color: abcdef
+bbPlugLdr.intVal 123
+bbPlugLdr.boolVal false
+bbPlugLdr.stringVal string
+bbPlugLdr.colorVal aabbcc

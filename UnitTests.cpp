@@ -368,6 +368,7 @@ void UnitTests::testIsInString() {
 
 void UnitTests::testSettings() {
 	Settings s;
+	std::string testrc = projectPath + "testfiles\\TestFilebbPlugLdr.rc";
 	
 	if (s.getString("blackbox.editor:") != "notepad.exe") {
 		MessageBox(NULL, "blackbox.editor: != notepad.exe", "Error in testSettings", MB_OK);
@@ -377,7 +378,7 @@ void UnitTests::testSettings() {
 		MessageBox(NULL, "readString didn't return the default value", "Error in testSettings", MB_OK);
 	}
 
-	std::ofstream outFile("C:\\TestFilebbPlugLdr.rc");
+	std::ofstream outFile(testrc.c_str());
 
 	if (!outFile.is_open()) {
 		MessageBox(NULL, "Couldn't open test file for writing", "Error in testSettings", MB_OK);
@@ -391,11 +392,11 @@ void UnitTests::testSettings() {
 
 	outFile.close();
 
-	s.writeString("C:\\TestFilebbPlugLdr.rc", "test.key.5:", "value.5");
-	s.writeString("C:\\TestFilebbPlugLdr.rc", "test.key.2:", "value.2b");
-	s.writeInt("C:\\TestFilebbPlugLdr.rc", "test.key.int:", 512);
-	s.writeBool("C:\\TestFilebbPlugLdr.rc", "test.key.bool:", false);
-	s.writeColor("C:\\TestFilebbPlugLdr.rc", "test.key.color:", 0xefcdab);
+	s.writeString(testrc.c_str(), "test.key.5:", "value.5");
+	s.writeString(testrc.c_str(), "test.key.2:", "value.2b");
+	s.writeInt(testrc.c_str(), "test.key.int:", 512);
+	s.writeBool(testrc.c_str(), "test.key.bool:", false);
+	s.writeColor(testrc.c_str(), "test.key.color:", 0xefcdab);
 }
 
 void UnitTests::testRCSettings() {
@@ -420,10 +421,11 @@ void UnitTests::testRCSettings() {
 		MessageBox(NULL, "ReadColor failed", "Error in testReadRCSettings", MB_OK);
 	}
 
-	WriteInt("C:\\TestFilebbPlugLdr.rc", "bbPlugLdr.intVal", i);
-	WriteBool("C:\\TestFilebbPlugLdr.rc", "bbPlugLdr.boolVal", b);
-	WriteString("C:\\TestFilebbPlugLdr.rc", "bbPlugLdr.stringVal", s);
-	WriteColor("C:\\TestFilebbPlugLdr.rc", "bbPlugLdr.colorVal", c);
+	std::string testrc = projectPath + "testfiles\\TestFilebbPlugLdr.rc";
+	WriteInt(testrc.c_str(), "bbPlugLdr.intVal", i);
+	WriteBool(testrc.c_str(), "bbPlugLdr.boolVal", b);
+	WriteString(testrc.c_str(), "bbPlugLdr.stringVal", s);
+	WriteColor(testrc.c_str(), "bbPlugLdr.colorVal", c);
 }
 
 void UnitTests::runTests(HWND hWnd) {

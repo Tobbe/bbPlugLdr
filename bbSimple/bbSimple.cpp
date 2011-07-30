@@ -39,7 +39,6 @@ extern "C" int __cdecl beginPlugin(HINSTANCE hPluginInstance)
 {
 	WNDCLASS wc;
 	hWndBlackbox = NULL;
-	//hWndBlackbox = GetBBWnd();
 	hInstance = hPluginInstance;
 	ZeroMemory(&wc, sizeof(wc));
 	wc.lpfnWndProc = WndProc;

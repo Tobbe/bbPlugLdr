@@ -29,6 +29,10 @@ class MenuItem;
 class StyleItem;
 class SystemTray;
 
+#ifdef _DEBUG
+	int getCallCountGetBBWnd();
+#endif
+
 extern "C" {	
 	__declspec(dllexport) int initModuleEx(HWND hwndParent, HINSTANCE hInstance, LPCSTR szPath);
 	__declspec(dllexport) void quitModule(HINSTANCE hInstance);

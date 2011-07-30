@@ -112,20 +112,19 @@ void SetDefaultRCSettings()
 extern "C" int CDECL beginPlugin(HINSTANCE hPluginInstance)
 {
 	WNDCLASS wc;
-	//hWndBlackbox = GetBBWnd();
 	hWndBlackbox = NULL;
 	hInstance = hPluginInstance;
 	ZeroMemory(&wc, sizeof(wc));
 	wc.lpfnWndProc = WndProc;
 	wc.hInstance = hPluginInstance;
 	wc.lpszClassName = szAppName;
-	if(!RegisterClass(&wc)) {
+	if (!RegisterClass(&wc)) {
 		MessageBox(hWndBlackbox, "Error registering window class", szVersion, MB_OK | MB_ICONERROR | MB_TOPMOST);
 		return 1;
 	}
 
 	hWndPlugin = CreateWindow(szAppName, 0, 0, 0, 0, 0, 0, 0, 0, hPluginInstance, 0);
-	if(!hWndPlugin)	{						   
+	if (!hWndPlugin) {
 		MessageBox(hWndBlackbox, "Error creating window", szVersion, MB_OK | MB_ICONERROR | MB_TOPMOST);
 		return 1;
 	}

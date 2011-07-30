@@ -124,10 +124,22 @@ void UnitTests::testExportedFunctions() {
 	// the testing is done either by calling a plugin that uses
 	// the function, or by calling the function ourselves.
 
+	int prevCallCount = getCallCountGetBBWnd();
+
 	BBPlugin bbp(projectPath + "Debug\\bbPluginSettings.dll", NULL);
 	if (bbp.runBegin() < 0) {
 		MessageBox(NULL, bbp.getError().c_str(), TEXT("Error in testExportedFunctions"), MB_OK);
 		return;
+	}
+
+	int callCount = getCallCountGetBBWnd();
+
+	if (callCount <= prevCallCount) {
+		MessageBox(NULL, TEXT("GetBBWnd hasn't been called"), TEXT("Error in testExportedFunctions"), MB_OK);
+	}
+
+	if (callCount > prevCallCount + 1) {
+		MessageBox(NULL, TEXT("GetBBWnd has been called too many times"), TEXT("Error in testExportedFunctions"), MB_OK);
 	}
 
 	if (bbp.runEnd() < 0) {
@@ -146,10 +158,22 @@ void UnitTests::testExportedFunctions() {
 }
 
 void UnitTests::testLoadRealPlugin() {
+	int prevCallCount = getCallCountGetBBWnd();
+
 	BBPlugin bbp(projectPath + "Debug\\bbAnalog.dll", NULL);
 	if (bbp.runBegin() < 0) {
 		MessageBox(NULL, bbp.getError().c_str(), TEXT("Error in testLoadRealPlugin"), MB_OK);
 		return;
+	}
+
+	int callCount = getCallCountGetBBWnd();
+
+	if (callCount <= prevCallCount) {
+		MessageBox(NULL, TEXT("GetBBWnd hasn't been called"), TEXT("Error in testExportedFunctions"), MB_OK);
+	}
+
+	if (callCount > prevCallCount + 1) {
+		MessageBox(NULL, TEXT("GetBBWnd has been called too many times"), TEXT("Error in testExportedFunctions"), MB_OK);
 	}
 
 	MessageBox(NULL, TEXT("Execution will continue when you press OK"), TEXT("Pause in testLoadRealPlugin"), MB_OK);

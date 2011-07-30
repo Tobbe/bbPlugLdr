@@ -126,9 +126,17 @@ extern "C" void quitModule(HINSTANCE hInstance) {
 	UnregisterClass(className, hInstance);
 }
 
+#ifdef _DEBUG
+int callCountGetBBWnd = 0;
+
+int getCallCountGetBBWnd() {
+	return callCountGetBBWnd;
+}
+#endif
+
 HWND GetBBWnd() {
 #ifdef _DEBUG
-	MessageBox(NULL, "Calling GetBBWnd()", "DEBUG", MB_OK);
+	callCountGetBBWnd++;
 #endif
 	return hwnd;
 }

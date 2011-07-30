@@ -453,8 +453,6 @@ void UnitTests::testRCSettings() {
 }
 
 void UnitTests::runTests(HWND hWnd) {
-	MessageBox(NULL, TEXT("Starting test sequence"), TEXT("Testing"), MB_OK);
-
 	testLoad();
 	testBeginEnd();
 	testSecondConstructor();

@@ -4,6 +4,7 @@
 #include "Settings.h"
 #include "BBColor.h"
 #include "bbPlugLdr.h"
+#include "../Litestep24x/lsapi/lsapi.h"
 #include <windows.h>
 #include <vector>
 #include <algorithm>
@@ -306,16 +307,21 @@ void UnitTests::testColorrefToString() {
 	}
 }
 
-void UnitTests::testHorizontalGradient(HWND hWnd) {
+void UnitTests::testHorizontalGradient() {
 	RECT r;
 	r.top = 0;
 	r.bottom = 100;
 	r.left = 0;
 	r.right = 100;
 
-	//HDC hDC = CreateDC("DISPLAY", NULL, NULL, NULL);
-	HDC hDC = GetDC(hWnd);
-	HBITMAP hBitmap = CreateCompatibleBitmap(hDC, 100, 100);
+	HDC hDCScreen = GetDC(NULL);
+
+	HDC hDCWanted = CreateCompatibleDC(hDCScreen);
+	HBITMAP hBitmapWanted = LoadLSImage((projectPath + "testfiles\\horizontal_gradient.bmp").c_str(), NULL);
+	HBITMAP hOldBitmapWanted = static_cast<HBITMAP>(SelectObject(hDCWanted, hBitmapWanted));
+
+	HDC hDC = CreateCompatibleDC(hDCScreen);
+	HBITMAP hBitmap = CreateCompatibleBitmap(hDCScreen, 100, 100);
 	HBITMAP hOldBitmap = static_cast<HBITMAP>(SelectObject(hDC, hBitmap));
 
 	MakeGradient(hDC, r, B_HORIZONTAL, RGB(0, 0, 255), RGB(255, 255, 0), false, 0, 0, 0, RGB(0, 0, 0), 0);		
@@ -332,18 +338,37 @@ void UnitTests::testHorizontalGradient(HWND hWnd) {
 	r.top = 5;
 	r.right = 95;
 	r.bottom = 95;
-	MakeGradient(hDC, r, B_HORIZONTAL, RGB(255, 255, 0), RGB(0, 0, 255), false, 0, 0, 0, RGB(0, 0, 0), 0);		
+	MakeGradient(hDC, r, B_HORIZONTAL, RGB(255, 255, 0), RGB(0, 0, 255), false, 0, 0, 0, RGB(0, 0, 0), 0);
 
 	if (GetPixel(hDC, 5, 50) != RGB(255, 255, 0)) {
-		MessageBox(NULL, TEXT("Starting color of gradient is wrong"), TEXT("Error in testHorizontalGradient"), MB_OK);
+		MessageBox(NULL, TEXT("Starting color of inner gradient is wrong"), TEXT("Error in testHorizontalGradient"), MB_OK);
 	}
 
 	if (GetPixel(hDC, 94, 50) != RGB(0, 0, 255)) {
-		MessageBox(NULL, "Ending color of gradient is wrong", "Error in testHorizontalGradient", MB_OK);
+		MessageBox(NULL, "Ending color of inner gradient is wrong", "Error in testHorizontalGradient", MB_OK);
 	}
+
+	bool alerted = false;
+	for (int y = 0; y < 100; y++) {
+		for (int x = 0; x < 100; x++) {
+			if (GetPixel(hDC, x, y) != GetPixel(hDCWanted, x, y)) {
+				if (!alerted) {
+					alerted = true;
+					MessageBox(NULL, "x,y doesn't match in hDC and hDCWanted", "Error in testHorizontalGradient", MB_OK);
+				}
+			}
+		}
+	}
+
+	SelectObject(hDCWanted, hOldBitmapWanted);
+	DeleteObject(hBitmapWanted);
+	DeleteDC(hDCWanted);
 
 	SelectObject(hDC, hOldBitmap);
 	DeleteObject(hBitmap);
+	DeleteDC(hDC);
+
+	ReleaseDC(NULL, hDCScreen);
 }
 
 void UnitTests::testOtherGradients(HWND hWnd) {
@@ -477,7 +502,7 @@ void UnitTests::runTests(HWND hWnd) {
 	testColorStringToColorref();
 	testColorrefToString();
 
-	testHorizontalGradient(hWnd);
+	testHorizontalGradient();
 	testOtherGradients(hWnd);
 
 	testIsInString();

@@ -27,7 +27,7 @@ private:
 	void testColorStringToColorref();
 	void testColorrefToString();
 
-	void testHorizontalGradient(HWND hWnd);
+	void testHorizontalGradient();
 	void testOtherGradients(HWND hWnd);
 
 	void testIsInString();

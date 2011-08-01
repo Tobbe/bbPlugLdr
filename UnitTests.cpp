@@ -512,7 +512,7 @@ void UnitTests::testRCSettings() {
 	WriteColor(testrc.c_str(), "bbPlugLdr.colorVal", c);
 }
 
-void UnitTests::runTests(HWND hWnd) {
+void UnitTests::runTests() {
 	testLoad();
 	testBeginEnd();
 	testSecondConstructor();

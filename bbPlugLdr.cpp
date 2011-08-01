@@ -55,7 +55,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			#ifdef _DEBUG
 				if (firstShow) {
 					firstShow = false;
-					tests.runTests(hwnd);
+					tests.runTests();
 				}
 			#endif // _DEBUG
 			EndPaint(hwnd, &ps);

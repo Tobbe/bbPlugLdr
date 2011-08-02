@@ -8,7 +8,7 @@ class UnitTests {
 public:
 	UnitTests();
 	~UnitTests();
-	void runTests(HWND hWnd);
+	void runTests();
 protected:
 	
 private:
